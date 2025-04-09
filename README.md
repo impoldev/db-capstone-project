@@ -1,7 +1,6 @@
 SQL QUERIES
 
 -- Insert into Customers
-
 INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES
 (1, 'Alice Smith', 'alice@example.com', '1234567890'),
 (2, 'Bob Johnson', 'bob@example.com', '9876543210'),
@@ -10,7 +9,6 @@ INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES
 (5, 'Emma Davis', 'emma@example.com', '3337778899');
 
 -- Insert into Staff
-
 INSERT INTO Staff (StaffID, StaffName, Role, Salary) VALUES
 (1, 'John Doe', 'Waiter', 30000),
 (2, 'Jane Roe', 'Chef', 45000),
@@ -18,7 +16,6 @@ INSERT INTO Staff (StaffID, StaffName, Role, Salary) VALUES
 (4, 'Olivia Kim', 'Waiter', 32000);
 
 -- Insert into MenuItems
-
 INSERT INTO MenuItems (MenuItemID, MenuItemName, Type, Price, Stock) VALUES
 (1, 'Bruschetta', 'starter', 6.99, 50),
 (2, 'Garlic Bread', 'starter', 5.50, 40),
@@ -28,7 +25,6 @@ INSERT INTO MenuItems (MenuItemID, MenuItemName, Type, Price, Stock) VALUES
 (6, 'Panna Cotta', 'dessert', 6.50, 18);
 
 -- Insert into Menu
-
 INSERT INTO Menu (MenuID, MenuName, Cuisine, MenuItemID) VALUES
 (1, 'Italian Classics', 'Italian', 1),
 (2, 'Italian Classics', 'Italian', 2),
@@ -38,16 +34,13 @@ INSERT INTO Menu (MenuID, MenuName, Cuisine, MenuItemID) VALUES
 (6, 'Sweet Delights', 'Italian', 6);
 
 -- Insert into Bookings
-
-INSERT INTO Bookings (BookingID, Date, People, TableNumber, BookingName) VALUES
-(1, '2025-04-08', 2, 5, 'Alice Smith'),
-(2, '2025-04-09', 4, 2, 'Bob Johnson'),
-(3, '2025-04-10', 3, 6, 'Carla Gomez'),
-(4, '2025-04-11', 1, 1, 'David Lee'),
-(5, '2025-04-12', 5, 3, 'Emma Davis');
+INSERT INTO Bookings (BookingID, BookingDate, TableNumber, CustomerID) VALUES
+(1, '2022-10-10', 5, 1),
+(2, '2022-11-12', 3, 3),
+(3, '2022-10-11', 2, 2),
+(4, '2022-10-13', 2, 1);
 
 -- Insert into OrderDeliveryStatus
-
 INSERT INTO OrderDeliveryStatus (OrderDeliveryID, Status, DeliveryDate) VALUES
 (1, 'Delivered', '2025-04-08'),
 (2, 'Pending', NULL),
@@ -56,13 +49,16 @@ INSERT INTO OrderDeliveryStatus (OrderDeliveryID, Status, DeliveryDate) VALUES
 (5, 'Cancelled', NULL);
 
 -- Insert into Orders
+INSERT INTO Orders (OrderID, Date, Quantity, TotalCost, MenuID, CustomerID, StaffID, OrderDeliveryID) VALUES
+(1, '2025-04-08', 2, 13.98, 1, 1, 1, 1),
+(2, '2025-04-09', 3, 38.97, 3, 2, 2, 2),
+(3, '2025-04-10', 2, 11.49, 2, 3, 1, 3),
+(4, '2025-04-11', 1, 210.00, 4, 4, 3, 4),
+(5, '2025-04-12', 2, 250.00, 5, 5, 4, 5);
 
-INSERT INTO Orders (OrderID, Date, Quantity, TotalCost, MenuID, CustomerID, StaffID, OrderDeliveryID, BookingID) VALUES
-(1, '2025-04-08', 2, 13.98, 1, 1, 1, 1, 1),
-(2, '2025-04-09', 3, 38.97, 3, 2, 2, 2, 2),
-(3, '2025-04-10', 2, 11.49, 2, 3, 1, 3, 3),
-(4, '2025-04-11', 1, 210.00, 4, 4, 3, 4, 4),
-(5, '2025-04-12', 2, 250.00, 5, 5, 4, 5, 5);
+-- Insert into Customers for anonymous bookings
+INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES 
+(999, 'Guest', 'Guest', 'Guest');
 
 --- 1.1 Virtual table query
 
@@ -128,3 +124,110 @@ SELECT CONCAT('Order ', id, ' is cancelled') AS Confirmation;
 END
 
 CALL CancelOrder(1);
+
+--- 3.1 Populate Bookings with specific data (done in the first section)
+
+SELECT * FROM Bookings;
+
+--- 3.2 CheckBooking procedure
+
+CREATE DEFINER=`db`@`%` PROCEDURE `CheckBooking`(IN booking_date DATE, IN booking_table INT)
+BEGIN
+
+DECLARE booked INT;
+SELECT COUNT(BookingID) INTO booked FROM Bookings 
+WHERE TableNumber = booking_table AND BookingDate = booking_date;
+
+SELECT IF(
+booked > 0, 
+CONCAT('Table ', booking_table, ' is already booked'), 
+CONCAT('Table ', booking_table, ' is available')
+) AS 'Booking status';
+END
+
+CALL CheckBooking('2022-11-12', 3);
+
+--- 3.3 AddValidBooking procedure
+
+CREATE DEFINER=`db`@`%` PROCEDURE `AddValidBooking`(IN booking_date DATE, IN booking_table INT)
+BEGIN
+
+DECLARE booked INT;
+SELECT COUNT(BookingID) INTO booked FROM Bookings 
+WHERE TableNumber = booking_table AND BookingDate = booking_date;
+
+START TRANSACTION;
+
+INSERT INTO Bookings(CustomerID, BookingDate, TableNumber) VALUES(999, booking_date, booking_table);
+
+IF booked > 0 THEN
+ROLLBACK;
+SELECT CONCAT('Table ', booking_table, ' is already booked - booking cancelled') AS 'Booking status';
+ELSE
+COMMIT;
+SELECT CONCAT('Table ', booking_table, ' is available - booking completed') AS 'Booking status';
+END IF;
+
+END
+
+CALL AddValidBooking('2022-12-17', 6);
+
+--- 4.1 AddBooking procedure
+
+CREATE DEFINER=`db`@`%` PROCEDURE `AddBooking`(IN booking_id INT, IN customer_id INT, IN table_number INT, IN booking_date DATE)
+BEGIN
+
+DECLARE booked INT;
+SELECT COUNT(BookingID) INTO booked FROM Bookings 
+WHERE BookingID = booking_id;
+
+IF booked > 0 THEN
+SELECT 'BookingID is already taken.' AS 'Error';
+ELSE
+INSERT INTO Bookings(BookingID, BookingDate, TableNumber, CustomerID) VALUES(booking_id, booking_date, table_number, customer_id);
+SELECT 'New booking added.' AS 'Confirmation';
+END IF;
+
+END
+
+CALL AddBooking(9, 3, 4, '2022-12-30');
+
+--- 4.2 UpdateBooking procedure
+
+CREATE DEFINER=`db`@`%` PROCEDURE `UpdateBooking`(IN booking_id INT, IN booking_date DATE)
+BEGIN
+
+DECLARE booked INT;
+SELECT COUNT(BookingID) INTO booked FROM Bookings 
+WHERE BookingID = booking_id;
+
+IF booked = 0 THEN
+SELECT CONCAT('Booking ', booking_id, " doesn't exist") AS 'Error';
+ELSE
+UPDATE Bookings SET BookingDate = booking_date WHERE BookingID = booking_id;
+SELECT CONCAT('Booking ', booking_id, " updated") AS 'Confirmation';
+END IF;
+
+END
+
+CALL UpdateBooking(9, '2022-12-17');
+
+-- 4.3 CancelBooking procedure
+
+CREATE DEFINER=`db`@`%` PROCEDURE `CancelBooking`(IN booking_id INT)
+BEGIN
+
+DECLARE booked INT;
+SELECT COUNT(BookingID) INTO booked FROM Bookings 
+WHERE BookingID = booking_id;
+
+IF booked = 0 THEN
+SELECT CONCAT('Booking ', booking_id, " doesn't exist") AS 'Error';
+ELSE
+DELETE FROM Bookings WHERE BookingID = booking_id;
+SELECT CONCAT('Booking ', booking_id, " cancelled") AS 'Confirmation';
+END IF;
+
+END
+
+CALL CancelBooking(9);
