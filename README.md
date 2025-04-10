@@ -135,7 +135,7 @@ END
 
 CALL CancelOrder(1);
 
---- 3.1 Populate Bookings with specific data (done in the first section)
+--- 3.1 Populate Bookings with specific data (done in the INSERT section)
 SELECT * FROM Bookings;
 
 --- 3.2 CheckBooking procedure
