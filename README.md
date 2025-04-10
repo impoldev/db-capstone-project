@@ -7,7 +7,7 @@ This is my final project for the Database Engineer Capstone course hosted at Cou
 
 ## 📦 1. Database
 
-Find the data model, png snapshots for every task and the final SQL database in the folder: **`1. Database`**. Below are all the SQL statements used in the project after building the database from the data model.
+Find the data model extracted from MySQL Workbench, png snapshots for every task and the final SQL database in the folder: **`1. Database`**. Below are all the SQL statements used in the project after building the database from the data model.
 
 ### ✅ SQL INSERT statements
 
