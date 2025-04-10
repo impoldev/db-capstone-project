@@ -1,6 +1,6 @@
 # Database Engineer Capstone Project
 
-This is my final project for the Database Engineer Capstone course hosted at Coursera. It includes:
+This is my final project for the Database Engineer Capstone course, designed by Meta and hosted on Coursera. It includes:
 - Robust SQL scripts with inserts, joins, views, subqueries, procedures, prepared statements, and more.
 - Data analysis with Tableau.
 - Integration with MySQL Connector Python using Jupyter.
