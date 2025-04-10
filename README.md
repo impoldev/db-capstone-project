@@ -1,5 +1,17 @@
-SQL QUERIES
+# Database Engineer Capstone Project
 
+This is my final project for the Database Engineer Capstone course hosted at Coursera. It includes:
+- Robust SQL scripts with inserts, joins, views, subqueries, procedures, prepared statements, and more.
+- Data analysis with Tableau.
+- Integration with MySQL Connector Python using Jupyter.
+
+## 📦 1. Database
+
+Find the data model, png snapshots for every task and the final SQL database in the folder: **`1. Database`**. Below are all the SQL statements used in the project after building the database from the data model.
+
+### ✅ SQL INSERT STATEMENTS
+
+```sql
 -- Insert into Customers
 INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES
 (1, 'Alice Smith', 'alice@example.com', '1234567890'),
@@ -59,9 +71,12 @@ INSERT INTO Orders (OrderID, Date, Quantity, TotalCost, MenuID, CustomerID, Staf
 -- Insert into Customers for anonymous bookings
 INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES 
 (999, 'Guest', 'Guest', 'Guest');
+```
 
+### 🔍 Queries & Views
+
+```sql
 --- 1.1 Virtual table query
-
 CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `db`@`%` 
@@ -79,7 +94,6 @@ VIEW `ordersview` AS
 SELECT * FROM OrdersView;
 
 --- 1.2 JOIN statement
-
 SELECT Customers.CustomerID, Customers.FullName, Orders.OrderID, Orders.TotalCost AS Cost, Menu.MenuName, MenuItems.MenuItemname AS ItemName, MenuItems.Type FROM Orders
 INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
 INNER JOIN Menu ON Orders.MenuID = Menu.MenuID
@@ -87,14 +101,12 @@ INNER JOIN MenuItems ON Menu.MenuItemID = MenuItems.MenuItemID
 WHERE MenuItems.Type != 'dessert' AND Orders.TotalCost > 150
 ORDER BY Cost;
 
---- 1.3 Subquery statement
-
+--- 1.3 Subquery
 SELECT MenuItems.MenuItemName AS MenuName FROM MenuItems 
 INNER JOIN Menu ON Menu.MenuItemID = MenuItems.MenuItemID
 WHERE Menu.MenuID = ANY (SELECT MenuId FROM Orders WHERE Quantity > 2);
 
 --- 2.1 Stored procedure(1)
-
 CREATE DEFINER=`db`@`%` PROCEDURE `GetMaxQuantity`()
 BEGIN
 SELECT MAX(Quantity) AS 'Max Quantity In Order' FROM Orders;
@@ -103,7 +115,6 @@ END
 CALL GetMaxQuantity();
 
 --- 2.2 Prepared statement
-
 PREPARE GetOrderDetail FROM
 '
 SELECT OrderID, Quantity, TotalCost AS OrderCost FROM Orders 
@@ -116,7 +127,6 @@ EXECUTE GetOrderDetail USING @id;
 DEALLOCATE PREPARE GetOrderDetail;
 
 --- 2.3 Stored procedure(2)
-
 CREATE DEFINER=`db`@`%` PROCEDURE `CancelOrder`(IN id INT)
 BEGIN
 DELETE FROM Orders WHERE OrderID = id;
@@ -126,11 +136,9 @@ END
 CALL CancelOrder(1);
 
 --- 3.1 Populate Bookings with specific data (done in the first section)
-
 SELECT * FROM Bookings;
 
 --- 3.2 CheckBooking procedure
-
 CREATE DEFINER=`db`@`%` PROCEDURE `CheckBooking`(IN booking_date DATE, IN booking_table INT)
 BEGIN
 
@@ -148,7 +156,6 @@ END
 CALL CheckBooking('2022-11-12', 3);
 
 --- 3.3 AddValidBooking procedure
-
 CREATE DEFINER=`db`@`%` PROCEDURE `AddValidBooking`(IN booking_date DATE, IN booking_table INT)
 BEGIN
 
@@ -173,7 +180,6 @@ END
 CALL AddValidBooking('2022-12-17', 6);
 
 --- 4.1 AddBooking procedure
-
 CREATE DEFINER=`db`@`%` PROCEDURE `AddBooking`(IN booking_id INT, IN customer_id INT, IN table_number INT, IN booking_date DATE)
 BEGIN
 
@@ -193,7 +199,6 @@ END
 CALL AddBooking(9, 3, 4, '2022-12-30');
 
 --- 4.2 UpdateBooking procedure
-
 CREATE DEFINER=`db`@`%` PROCEDURE `UpdateBooking`(IN booking_id INT, IN booking_date DATE)
 BEGIN
 
@@ -213,7 +218,6 @@ END
 CALL UpdateBooking(9, '2022-12-17');
 
 -- 4.3 CancelBooking procedure
-
 CREATE DEFINER=`db`@`%` PROCEDURE `CancelBooking`(IN booking_id INT)
 BEGIN
 
@@ -231,3 +235,22 @@ END IF;
 END
 
 CALL CancelBooking(9);
+```
+
+## 📊 2. Tableau
+
+Find the data source, Tableau workbook, and png snapshots for every task in the folder: **`2. Tableau`**
+
+## 🐍 3. MySQL Connector Python
+
+Folder: **`3. MySQL Connector Python`** contains:
+- Jupyter Notebook file.
+- A png snapshot with code outputs.
+
+Remember tu use your own credentials to establish a valid connection.
+
+## ✉️ Contact
+
+- GitHub: https://github.com/impoldev
+- LinkedIn: https://www.linkedin.com/in/pabloolle/
+- Email: contact@impol.dev
