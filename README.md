@@ -247,7 +247,12 @@ Folder: **`3. MySQL Connector Python`** contains:
 - Jupyter Notebook file.
 - A png snapshot with code outputs.
 
-Remember tu use your own credentials to establish a valid connection.
+Remember to use your own credentials to establish a valid connection.
+
+## Acknowledgments
+
+- **Meta** for the Meta Database Engineer courses and the opportunity to showcase my skills.
+- **Coursera** team for hosting this course on their platform.
 
 ## ✉️ Contact
 
