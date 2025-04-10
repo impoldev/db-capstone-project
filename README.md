@@ -251,8 +251,8 @@ Remember to use your own credentials to establish a valid connection.
 
 ## 💡 Acknowledgments
 
-- **Meta** for the Meta Database Engineer courses and the opportunity to showcase my skills.
-- **Coursera** team for hosting this course on their platform.
+- **Meta** for designing all the Meta Database Engineer courses and giving me the opportunity to showcase my skills.
+- **Coursera** team for hosting this courses on their platform.
 
 ## ✉️ Contact
 
