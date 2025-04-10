@@ -9,7 +9,7 @@ This is my final project for the Database Engineer Capstone course hosted at Cou
 
 Find the data model, png snapshots for every task and the final SQL database in the folder: **`1. Database`**. Below are all the SQL statements used in the project after building the database from the data model.
 
-### ✅ SQL INSERT STATEMENTS
+### ✅ SQL INSERT statements
 
 ```sql
 -- Insert into Customers
@@ -73,7 +73,7 @@ INSERT INTO Customers (CustomerID, FullName, Email, ContactNumber) VALUES
 (999, 'Guest', 'Guest', 'Guest');
 ```
 
-### 🔍 Queries & Views
+### 🔍 Specific statements for tasks
 
 ```sql
 --- 1.1 Virtual table query
