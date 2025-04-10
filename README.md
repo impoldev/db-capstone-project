@@ -243,7 +243,7 @@ Find the data source, Tableau workbook, and png snapshots for every task in the 
 
 ## 🐍 3. MySQL Connector Python
 
-Folder: **`3. MySQL Connector Python`** contains:
+Folder **`3. MySQL Connector Python`** contains:
 - Jupyter Notebook file.
 - A png snapshot with code outputs.
 
